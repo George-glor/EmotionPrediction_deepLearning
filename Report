@@ -1,0 +1,96 @@
+```markdown
+# **Rapport: Emotion Detection med Deep Learning**
+
+## **Introduktion**
+Detta projekt syftar till att utveckla en modell för att identifiera och klassificera ansiktsuttryck i realtid med hjälp av deep learning. Modellen kan känna igen sju olika känslor: Arg, Avsky, Rädsla, Glad, Ledsen, Överraskad och Neutral.
+
+## **Dataset**
+Datasettet består av totalt 35,887 bilder fördelade på träningsdata, valideringsdata och testdata:
+
+- **Träningsdata**: 22,968 bilder
+- **Valideringsdata**: 5,741 bilder
+- **Testdata**: 7,178 bilder
+
+Varje bild i datasetet är kategoriserad i en av de sju känslorna, vilket gör det möjligt för modellen att lära sig identifiera skillnader mellan dem.
+
+## **Modellarkitektur**
+Modellen som används är en djup neural nätverksmodell med flera konvolutionella lager följt av fullt anslutna (dense) lager och dropout-lager för att motverka överanpassning. Arkitekturen består av följande lager:
+
+1. **Konvolutionella lager**: Extraherar viktiga funktioner från bilderna.
+2. **Pooling-lager**: Minskar dimensionerna av de konvolutionella lagrens utdata.
+3. **Dense-lager**: Kombinerar funktionerna för att skapa slutliga förutsägelser.
+4. **Dropout-lager**: Används för att förhindra överanpassning genom att slumpmässigt stänga av neuroner under träning.
+
+```python
+nn_model = Sequential()
+nn_model.add(Dense(100, activation='relu', input_shape=(n_cols,)))
+nn_model.add(Dropout(rate=0.2))
+nn_model.add(Dense(50, activation='relu'))
+nn_model.add(Dense(1, activation='sigmoid'))
+nn_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+early_stopping_monitor = EarlyStopping(patience=3)
+nn_model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, callbacks=[early_stopping_monitor])
+```
+
+## **Träningsresultat**
+Träningen utfördes under 10 epoker med följande resultat:
+
+- **Träningsnoggrannhet**: 56,16%
+- **Valideringsnoggrannhet**: 52,93%
+- **Testnoggrannhet**: 52,34%
+
+Nedan visas noggrannhet och förlust under träning och validering:
+
+![Model accuracy](link_till_bild_acc.png)
+![Model loss](link_till_bild_loss.png)
+
+## **Användning av Emotion Detection-kameran**
+Emotion detection-modellen används i realtid för att analysera ansiktsuttryck från en webbkamera. Genom att trycka på mellanslagstangenten kan du fånga en bild och spara förutsägelsen.
+
+```python
+# Importera nödvändiga bibliotek
+import cv2
+import numpy as np
+from keras.models import load_model
+
+# Ladda den förtränade emotion detection-modellen
+emotion_model = load_model('emotion_detection_model.keras')
+
+# Starta videofångst
+video_capture = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = video_capture.read()
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5)
+    for (x, y, w, h) in faces:
+        face = gray_frame[y:y + h, x:x + w]
+        resized_face = cv2.resize(face, (48, 48))
+        normalized_face = resized_face / 255.0
+        reshaped_face = np.reshape(normalized_face, (1, 48, 48, 1))
+        prediction = emotion_model.predict(reshaped_face)
+        emotion_index = np.argmax(prediction)
+        predicted_emotion = emotion_labels[emotion_index]
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        cv2.putText(frame, predicted_emotion, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+    cv2.imshow('Emotion Detection Camera', frame)
+
+    # Tryck på 'q' för att avsluta eller 'space' för att ta en bild
+    key = cv2.waitKey(1) & 0xFF
+    if key == ord('q'):
+        break
+    if key == ord(' '):
+        image_name = f"captured_emotion_{predicted_emotion}.jpg"
+        cv2.imwrite(image_name, frame)
+        print(f"Bild sparad: {image_name}")
+
+video_capture.release()
+cv2.destroyAllWindows()
+```
+
+## **Slutsats**
+Projektet visar hur deep learning kan användas för att skapa en realtidsmodell för emotion detection. Modellen presterade bäst på tränings- och valideringsdata, men det finns potential för förbättringar, till exempel genom att utöka datasetet och finjustera modellparametrarna.
+
+
