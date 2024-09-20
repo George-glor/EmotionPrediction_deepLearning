@@ -1,36 +1,10 @@
-
-    # **Rapport: Emotion Detection med Deep Learning**
-
-    ## **Introduktion**
-    Detta projekt syftar till att utveckla en modell för att identifiera och klassificera ansiktsuttryck i realtid med hjälp av deep learning. Modellen kan känna igen sju olika känslor: Arg, Avsky, Rädsla, Glad, Ledsen, Överraskad och Neutral.
-    
-    ## **Dataset**
-    ...
-    ```
-
-3. If you want to include code blocks within your Markdown file, you can specify the language for the code blocks separately, like so:
-
-    ```python
-    ```python
-    nn_model = Sequential()
-    nn_model.add(Dense(100, activation='relu', input_shape=(n_cols,)))
-    nn_model.add(Dropout(rate=0.2))
-    nn_model.add(Dense(50, activation='relu'))
-    nn_model.add(Dense(1, activation='sigmoid'))
-    nn_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    ```
-
-4. Remember to start and end the Markdown block with three backticks (```) without specifying "markdown" after the opening backticks.
-
-**Corrected Example:**
-
 ```markdown
-# **Rapport: Emotion Detection med Deep Learning**
+# Rapport: Emotion Detection med Deep Learning
 
-## **Introduktion**
+## Introduktion
 Detta projekt syftar till att utveckla en modell för att identifiera och klassificera ansiktsuttryck i realtid med hjälp av deep learning. Modellen kan känna igen sju olika känslor: Arg, Avsky, Rädsla, Glad, Ledsen, Överraskad och Neutral.
 
-## **Dataset**
+## Dataset
 Datasettet består av totalt 35,887 bilder fördelade på träningsdata, valideringsdata och testdata:
 
 - **Träningsdata**: 22,968 bilder
@@ -39,7 +13,7 @@ Datasettet består av totalt 35,887 bilder fördelade på träningsdata, valider
 
 Varje bild i datasetet är kategoriserad i en av de sju känslorna, vilket gör det möjligt för modellen att lära sig identifiera skillnader mellan dem.
 
-## **Modellarkitektur**
+## Modellarkitektur
 Modellen som används är en djup neural nätverksmodell med flera konvolutionella lager följt av fullt anslutna (dense) lager och dropout-lager för att motverka överanpassning. Arkitekturen består av följande lager:
 
 1. **Konvolutionella lager**: Extraherar viktiga funktioner från bilderna.
@@ -59,16 +33,19 @@ early_stopping_monitor = EarlyStopping(patience=3)
 nn_model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=10, callbacks=[early_stopping_monitor])
 ```
 
-## **Träningsresultat**
+## Träningsresultat
 Träningen utfördes under 10 epoker med följande resultat:
 
 - **Träningsnoggrannhet**: 56,16%
 - **Valideringsnoggrannhet**: 52,93%
 - **Testnoggrannhet**: 52,34%
 
+## Visualisering av Resultat
 Nedan visas noggrannhet och förlust under träning och validering:
 
 ![Model accuracy](link_till_bild_acc.png)
 ![Model loss](link_till_bild_loss.png)
 
-
+## Slutsats
+Modellen uppnådde en träningsnoggrannhet på 56,16% och en testnoggrannhet på 52,34%. Resultaten visar att det finns utrymme för förbättringar, såsom användning av fler data, bättre modellarkitektur, eller mer avancerade regulariseringstekniker. Trots detta kan modellen identifiera grundläggande känslor med viss noggrannhet, vilket är en bra utgångspunkt för vidare utveckling.
+```
